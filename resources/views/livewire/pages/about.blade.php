@@ -1,0 +1,168 @@
+<div class="min-h-screen bg-white">
+    <!-- Hero Image -->
+    @php
+        $heroImagePath = $heroImage?->image ? asset('storage/' . $heroImage->image) : null;
+    @endphp
+    
+    @if($heroImagePath)
+        <div class="relative h-96 overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800">
+            <img src="{{ $heroImagePath }}" 
+                 alt="{{ config('app.name') }}"
+                 class="w-full h-full object-cover"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 flex items-end" style="display:none;">
+                <div class="w-full h-full bg-gradient-to-br from-blue-600 to-blue-800"></div>
+            </div>
+        </div>
+    @else
+        <div class="bg-gradient-to-br from-blue-600 to-blue-800 h-96 flex items-center justify-center">
+            <div class="text-center text-white">
+                <i class="fas fa-school text-6xl opacity-40 mb-4"></i>
+            </div>
+        </div>
+    @endif
+
+    <!-- Content -->
+    <div class="max-w-6xl mx-auto py-16 px-4">
+        <h1 class="text-4xl font-bold text-gray-900 mb-12">Tentang Kami</h1>
+
+        <!-- Sambutan Kepala Sekolah (Always Visible) -->
+        @if($principalGreeting)
+            <div class="relative py-16 my-12 bg-gradient-to-br from-blue-50 via-white to-indigo-50 rounded-xl overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute inset-0 opacity-5">
+                    <div class="absolute top-0 left-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 right-0 w-96 h-96 bg-yellow-300 rounded-full blur-3xl"></div>
+                </div>
+
+                <div class="relative z-10 px-8">
+                    <!-- Section Label -->
+                    <div class="text-center mb-6">
+                        <span class="text-sm font-semibold tracking-widest uppercase text-blue-700">
+                            Sambutan
+                        </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
+                        {{ $principalGreeting->title ?? 'Sambutan Kepala Sekolah' }}
+                    </h2>
+
+                    <!-- Content Grid -->
+                    <div class="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+                        <!-- Text Content -->
+                        <div class="space-y-6 order-2 lg:order-1">
+                            <div class="text-gray-700 leading-relaxed text-base">
+                                {!! $principalGreeting->content !!}
+                            </div>
+                        </div>
+
+                        <!-- Principal Image with Circular Frame -->
+                        <div class="flex justify-center order-1 lg:order-2">
+                            <div class="relative w-64 h-64 md:w-80 md:h-80">
+                                <!-- Circular Background (Red) -->
+                                <div class="absolute inset-0 bg-red-500 rounded-full shadow-2xl"></div>
+                                
+                                <!-- Image -->
+                                <div class="absolute inset-4 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                    @if($principalGreeting && $principalGreeting->image)
+                                        <img src="{{ asset('storage/' . $principalGreeting->image) }}" 
+                                             alt="{{ $principalGreeting->title ?? 'Kepala Sekolah' }}"
+                                             class="w-full h-full object-cover">
+                                    @else
+                                        <div class="flex flex-col items-center justify-center text-center">
+                                            <i class="fas fa-user-tie text-7xl text-gray-400 opacity-60"></i>
+                                            <p class="text-gray-500 text-sm mt-4">Foto tidak tersedia</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Pelajari Lebih Lanjut Button (if not expanded) -->
+        @if(!$expanded && $principalGreeting)
+            <div class="text-center my-12">
+                <button wire:click="expand" class="inline-flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all hover:shadow-xl">
+                    <i class="fas fa-book mr-3"></i>
+                    Pelajari Lebih Lanjut
+                    <i class="fas fa-chevron-down ml-2"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- Expanded Content -->
+        @if($expanded)
+            <!-- Profil Sekolah -->
+            @if($schoolProfile)
+                <div class="mb-16 pt-12 border-t">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">{{ $schoolProfile->title }}</h2>
+                    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                        {!! $schoolProfile->content !!}
+                    </div>
+                </div>
+            @endif
+
+            <!-- Visi & Misi -->
+            @if($vision || $mission)
+                <div class="grid md:grid-cols-2 gap-12 my-16 pt-12 border-t">
+                    @if($vision)
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-lg">
+                            <h3 class="text-2xl font-bold text-blue-900 mb-4 flex items-center">
+                                <i class="fas fa-eye mr-3 text-blue-600"></i>
+                                {{ $vision->title }}
+                            </h3>
+                            <div class="text-gray-700 leading-relaxed">
+                                {!! $vision->content !!}
+                            </div>
+                        </div>
+                    @endif
+                    
+                    @if($mission)
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-lg">
+                            <h3 class="text-2xl font-bold text-green-900 mb-4 flex items-center">
+                                <i class="fas fa-bullseye mr-3 text-green-600"></i>
+                                {{ $mission->title }}
+                            </h3>
+                            <div class="text-gray-700 leading-relaxed">
+                                {!! $mission->content !!}
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
+            <!-- Other Sections -->
+            @forelse($aboutSections as $section)
+                @if(!in_array($section->key, ['school_profile', 'vision', 'mission', 'hero_image', 'principal_greeting']))
+                    <div class="mb-12 border-t pt-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ $section->title }}</h2>
+                        @if($section->image)
+                            <div class="mb-6 rounded-lg overflow-hidden">
+                                <img src="{{ asset('storage/' . $section->image) }}" 
+                                     alt="{{ $section->title }}"
+                                     class="w-full h-96 object-cover">
+                            </div>
+                        @endif
+                        <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                            {!! $section->content !!}
+                        </div>
+                    </div>
+                @endif
+            @empty
+            @endforelse
+
+            <!-- Collapse Button -->
+            <div class="text-center my-12 pt-12 border-t">
+                <button wire:click="$set('expanded', false)" class="inline-flex items-center px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all">
+                    <i class="fas fa-chevron-up mr-2"></i>
+                    Sembunyikan Detail
+                </button>
+            </div>
+        @endif
+    </div>
+</div>
