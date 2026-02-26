@@ -26,10 +26,15 @@
             @forelse($agendas as $agenda)
                 <div class="bg-white border-l-4 border-blue-600 p-6 rounded-lg shadow">
                     <h3 class="text-xl font-bold mb-2">{{ $agenda->title }}</h3>
-                    <p class="text-gray-600 mb-2">📅 {{ \Carbon\Carbon::parse($agenda->event_date)->format('d M Y H:i') }}</p>
+                    <p class="text-gray-600 mb-2">
+                        📅 {{ \Carbon\Carbon::parse($agenda->event_date)->format('d M Y') }}
+                        @if($agenda->event_time)
+                            | ⏰ {{ date('H:i', strtotime($agenda->event_time)) }}
+                        @endif
+                    </p>
                     <p class="text-gray-700">{{ $agenda->description }}</p>
                     <span class="inline-block mt-4 px-3 py-1 text-sm rounded-full {{ $agenda->status === 'upcoming' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                        {{ ucfirst($agenda->status) }}
+                        {{ $agenda->status === 'upcoming' ? 'Mendatang' : ($agenda->status === 'ongoing' ? 'Sedang Berlangsung' : 'Selesai') }}
                     </span>
                 </div>
             @empty

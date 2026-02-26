@@ -35,8 +35,9 @@ class TeacherResource extends Resource
                     ->tel(),
                 Forms\Components\TextInput::make('subject')
                     ->maxLength(255),
-                Forms\Components\Textarea::make('bio')
-                    ->columnSpanFull(),
+                Forms\Components\RichEditor::make('bio')
+                    ->columnSpanFull()
+                    ->helperText('Biografi guru. Anda dapat membuat paragraf dengan menekan Enter.'),
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->disk('public')

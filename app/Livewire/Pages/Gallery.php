@@ -5,11 +5,19 @@ namespace App\Livewire\Pages;
 use App\Models\Gallery as GalleryModel;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 class Gallery extends Component
 {
+    use WithPagination;
+
     public string $category = '';
+
+    public function updatedCategory()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {

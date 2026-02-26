@@ -113,6 +113,15 @@
     <!-- Footer -->
     <footer id="kontak" class="bg-gray-900 text-gray-300 pt-16 pb-8">
         <div class="container mx-auto px-6">
+            <!-- Google Maps Section -->
+            <div class="mb-12">
+                <h3 class="font-bold text-white text-xl mb-4">Lokasi Sekolah</h3>
+                <div class="rounded-lg overflow-hidden shadow-lg h-80">
+                    <iframe class="w-full h-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.825671156556!2d110.40635561111111!3d-7.055677022222222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e708d4d4d4d4d4d%3A0x1234567890abcdef!2sSD%20Bangsri!5e0!3m2!1sid!2sid!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="border:0;"></iframe>
+                </div>
+                <p class="text-sm text-gray-400 mt-4">📍 Jl. Pendidikan No. 123, Kota, Provinsi 12345</p>
+            </div>
+
             <div class="grid md:grid-cols-4 gap-8 mb-12">
                 <!-- School Info -->
                 <div>

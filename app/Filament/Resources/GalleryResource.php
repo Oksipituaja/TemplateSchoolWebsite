@@ -21,11 +21,15 @@ class GalleryResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', str()->slug($state))),
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description'),
+                    ->maxLength(255)
+                    ->unique('galleries', 'slug', ignoreRecord: true),
+                Forms\Components\RichEditor::make('description')
+                    ->helperText('Deskripsi galeri. Anda dapat membuat paragraf dengan menekan Enter.'),
                 Forms\Components\Select::make('category')
                     ->options([
                         'library' => 'Library',

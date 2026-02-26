@@ -32,7 +32,7 @@
         <!-- Gallery Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             @forelse($galleries as $item)
-                <div class="gallery-item group cursor-pointer">
+                <a href="{{ route('gallery.detail', $item->slug) }}" class="gallery-item group cursor-pointer block">
                     <div class="relative overflow-hidden rounded-xl h-64 bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center group-hover:from-blue-150 group-hover:to-blue-100 transition">
                         @if($item->image)
                             <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
@@ -46,10 +46,10 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <h3 class="font-bold text-lg text-gray-900">{{ $item->title }}</h3>
+                        <h3 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 transition">{{ $item->title }}</h3>
                         <p class="text-sm text-blue-700 font-medium">{{ ucfirst($item->category) }}</p>
                     </div>
-                </div>
+                </a>
             @empty
                 <div class="col-span-full bg-gradient-to-br from-blue-50 to-blue-100 p-12 rounded-lg text-center">
                     <svg class="w-16 h-16 text-blue-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

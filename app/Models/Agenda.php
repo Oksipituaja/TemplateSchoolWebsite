@@ -11,6 +11,7 @@ class Agenda extends Model
         'slug',
         'description',
         'event_date',
+        'event_time',
         'location',
         'status',
     ];

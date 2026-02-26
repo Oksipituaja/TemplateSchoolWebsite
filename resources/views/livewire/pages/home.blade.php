@@ -127,10 +127,10 @@
                         <div class="flex justify-center order-1 lg:order-2">
                             <div class="relative w-64 h-64 md:w-80 md:h-80">
                                 <!-- Circular Background (Red) -->
-                                <div class="absolute inset-0 bg-red-500 rounded-full shadow-2xl"></div>
+                                <div class="absolute inset-0 bg-blue-500 rounded-full shadow-2xl"></div>
                                 
                                 <!-- Image -->
-                                <div class="absolute inset-4 size-full rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                <div class="absolute inset-0 bg-red-500 size-full rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                                     @if(!empty($principalGreeting->image))
                                         <img src="{{ asset('storage/' . $principalGreeting->image) }}" 
                                              alt="{{ $principalGreeting->title }}" 
@@ -219,7 +219,7 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($facilities as $facility)
-                    <div class="facility-card group">
+                    <a href="{{ route('facility.detail', $facility->slug) }}" class="facility-card group block">
                         <div class="facility-image-wrapper h-64 bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center overflow-hidden rounded-t-2xl group-hover:from-blue-150 group-hover:to-blue-100 transition relative">
                             @if($facility->image)
                                 <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -232,13 +232,17 @@
                                 </svg>
                             @endif
                         </div>
-                        <div class="p-6">
-                            <h3 class="font-display text-lg font-bold text-gray-900 mb-2">
+                        <div class="p-6 bg-white group-hover:bg-blue-50 transition">
+                            <h3 class="font-display text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-700 transition">
                                 {{ $facility->name ?? 'Fasilitas' }}</h3>
-                            <p class="text-gray-600 text-sm">
+                            <p class="text-gray-600 text-sm mb-3">
                                 {{ Str::limit($facility->description ?? 'Fasilitas unggulan kami', 100) }}</p>
+                            <span class="inline-flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
+                                Lihat Detail
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </span>
                         </div>
-                    </div>
+                    </a>
                 @empty
                     <div class="col-span-full bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl text-center">
                         <svg class="w-12 h-12 text-blue-300 mx-auto mb-3" fill="none" stroke="currentColor"
@@ -347,6 +351,59 @@
         </div>
     </section>
 
+    <!-- Agenda Section -->
+    <section id="agenda" class="py-20 bg-gradient-to-br from-blue-50 to-white">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center mb-12 flex-col md:flex-row gap-8">
+                <div>
+                    <span class="text-blue-700 font-semibold text-sm uppercase tracking-wider">Jadwal Kegiatan</span>
+                    <h2 class="font-display text-4xl font-bold text-gray-900 mt-2">Agenda Kegiatan</h2>
+                </div>
+                <a href="{{ route('agenda') }}"
+                    class="text-blue-700 hover:text-blue-800 font-semibold flex items-center transition-colors">
+                    Lihat Semua
+                    <span class="ml-2">→</span>
+                </a>
+            </div>
+
+            <div class="space-y-4">
+                @forelse($agendas as $agenda)
+                    <div class="bg-white p-6 rounded-xl border-l-4 border-blue-600 shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="flex justify-between items-start gap-4 flex-col sm:flex-row">
+                            <div class="flex-1">
+                                <h3 class="font-display text-lg font-bold text-gray-900 mb-2">{{ $agenda->title }}</h3>
+                                <p class="text-gray-600 mb-3">{{ $agenda->description ?? 'Kegiatan penting di sekolah' }}</p>
+                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <span class="flex items-center gap-2">
+                                        <i class="fas fa-calendar text-blue-600"></i>
+                                        {{ \Carbon\Carbon::parse($agenda->event_date)->format('d M Y') }}
+                                    </span>
+                                    @if($agenda->event_time)
+                                        <span class="flex items-center gap-2">
+                                            <i class="fas fa-clock text-blue-600"></i>
+                                            {{ date('H:i', strtotime($agenda->event_time)) }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <span class="inline-block px-4 py-2 text-sm rounded-full font-semibold whitespace-nowrap {{ $agenda->status === 'upcoming' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
+                                {{ $agenda->status === 'upcoming' ? 'Mendatang' : 'Selesai' }}
+                            </span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl text-center">
+                        <svg class="w-12 h-12 text-blue-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 0v4m-9 8h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"></path>
+                        </svg>
+                        <p class="text-gray-600 font-semibold">Tidak ada agenda saat ini</p>
+                        <p class="text-gray-500 text-sm mt-1">Periksa halaman agenda untuk kegiatan terbaru</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
     <!-- Gallery Section -->
     <section id="galeri" class="py-20 bg-white">
         <div class="container mx-auto px-6">
@@ -361,7 +418,7 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 @forelse($galleries as $gallery)
-                    <div class="gallery-item group cursor-pointer">
+                    <a href="{{ route('gallery.detail', $gallery->slug) }}" class="gallery-item group cursor-pointer block">
                         <div class="relative overflow-hidden rounded-xl h-60 bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center group-hover:from-blue-150 group-hover:to-blue-100 transition">
                             @if($gallery->image)
                                 <img src="{{ asset('storage/' . $gallery->image) }}" alt="{{ $gallery->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
@@ -377,8 +434,8 @@
                                 <span class="text-white opacity-0 group-hover:opacity-100 transition-opacity text-lg font-semibold">{{ $gallery->title }}</span>
                             </div>
                         </div>
-                        <p class="mt-3 font-semibold text-gray-900">{{ $gallery->title }}</p>
-                    </div>
+                        <p class="mt-3 font-semibold text-gray-900 group-hover:text-blue-700 transition">{{ $gallery->title }}</p>
+                    </a>
                 @empty
                     <div class="col-span-full bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl text-center">
                         <svg class="w-12 h-12 text-blue-300 mx-auto mb-3" fill="none" stroke="currentColor"

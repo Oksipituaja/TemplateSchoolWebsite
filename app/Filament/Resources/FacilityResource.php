@@ -21,12 +21,16 @@ class FacilityResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', str()->slug($state))),
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                    ->maxLength(255)
+                    ->unique('facilities', 'slug', ignoreRecord: true),
+                Forms\Components\RichEditor::make('description')
+                    ->columnSpanFull()
+                    ->helperText('Deskripsi lengkap fasilitas. Anda dapat membuat paragraf dengan menekan Enter.'),
                 Forms\Components\TextInput::make('icon')
                     ->maxLength(255)
                     ->helperText('e.g., heroicon-o-building-library'),

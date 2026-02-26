@@ -21,23 +21,32 @@ class AgendaResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', str()->slug($state))),
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->unique('agendas', 'slug', ignoreRecord: true),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\DatePicker::make('event_date')
-                    ->required(),
+                    ->required()
+                    ->label('Tanggal Acara'),
+                Forms\Components\TimePicker::make('event_time')
+                    ->label('Waktu Acara')
+                    ->seconds(false),
                 Forms\Components\TextInput::make('location')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Lokasi'),
                 Forms\Components\Select::make('status')
                     ->options([
-                        'upcoming' => 'Upcoming',
-                        'ongoing' => 'Ongoing',
-                        'completed' => 'Completed',
+                        'upcoming' => 'Mendatang',
+                        'ongoing' => 'Sedang Berlangsung',
+                        'completed' => 'Selesai',
                     ])
-                    ->default('upcoming'),
+                    ->default('upcoming')
+                    ->required(),
             ]);
     }
 
@@ -48,18 +57,26 @@ class AgendaResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('event_date')
-                    ->date()
+                    ->date('d M Y')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('event_time')
+                    ->time('H:i')
+                    ->label('Waktu'),
                 Tables\Columns\TextColumn::make('location')
                     ->searchable(),
-                Tables\Columns\BadgeColumn::make('status'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'gray' => 'upcoming',
+                        'blue' => 'ongoing',
+                        'green' => 'completed',
+                    ]),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'upcoming' => 'Upcoming',
-                        'ongoing' => 'Ongoing',
-                        'completed' => 'Completed',
+                        'upcoming' => 'Mendatang',
+                        'ongoing' => 'Sedang Berlangsung',
+                        'completed' => 'Selesai',
                     ]),
             ])
             ->actions([
