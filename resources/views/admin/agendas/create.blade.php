@@ -7,17 +7,20 @@
     <form action="{{ route('admin.agendas.store') }}" method="POST" class="space-y-4">
         @csrf
 
-        <div><label class="block text-sm font-medium mb-1">Title</label>
+        <div>
+            <label class="block text-sm font-medium mb-1">Title</label>
             <input type="text" name="title" value="{{ old('title') }}" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
             @error('title') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
-        <div><label class="block text-sm font-medium mb-1">Slug</label>
+        <div>
+            <label class="block text-sm font-medium mb-1">Slug</label>
             <input type="text" name="slug" value="{{ old('slug') }}" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
             @error('slug') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
-        <div><label class="block text-sm font-medium mb-1">Event Date</label>
+        <div>
+            <label class="block text-sm font-medium mb-1">Event Date</label>
             <div class="flex gap-2">
                 <input type="text" id="eventDate" placeholder="Click to select date & time" readonly class="flex-1 px-3 py-2 border rounded-lg bg-white cursor-pointer">
                 <input type="hidden" name="event_date" id="event_date_input" value="{{ old('event_date') }}">
@@ -28,42 +31,24 @@
             @error('event_date') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            flatpickr('#eventDate', {
-                enableTime: true,
-                dateFormat: 'Y-m-d H:i',
-                time_24hr: true,
-                onOpen: function(selectedDates, dateStr, instance) {
-                    const timeInputs = instance.timeContainer.querySelectorAll('input');
-                    timeInputs.forEach((input, index) => {
-                        input.maxLength = '2';
-                        input.addEventListener('input', function() {
-                            if (index === 0 && this.value > 23) this.value = '23';
-                            if (index === 1 && this.value > 59) this.value = '59';
-                        });
-                    });
-                },
-                onChange: function(selectedDates, dateStr) {
-                    document.getElementById('event_date_input').value = dateStr;
-                }
-            });
-        });
-        </script>
+        <div>
+            <label class="block text-sm font-medium mb-1">Status</label>
+            <select name="status" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="upcoming" {{ old('status') === 'upcoming' ? 'selected' : '' }}>Mendatang</option>
+                <option value="ongoing" {{ old('status') === 'ongoing' ? 'selected' : '' }}>Sedang Berlangsung</option>
+                <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Selesai</option>
+            </select>
+            @error('status') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+        </div>
 
-        <div><label class="block text-sm font-medium mb-1">Location</label>
+        <div>
+            <label class="block text-sm font-medium mb-1">Location</label>
             <input type="text" name="location" value="{{ old('location') }}" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <div><label class="block text-sm font-medium mb-1">Description</label>
+        <div>
+            <label class="block text-sm font-medium mb-1">Description</label>
             <textarea name="description" rows="4" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">{{ old('description') }}</textarea>
-        </div>
-
-        <div><label class="block text-sm font-medium mb-1">Status</label>
-            <select name="status" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>Published</option>
-            </select>
         </div>
 
         <div class="flex gap-3 pt-4 border-t">
@@ -72,4 +57,17 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr('#eventDate', {
+        enableTime: true,
+        dateFormat: 'Y-m-d H:i',
+        time_24hr: true,
+        onChange: function(selectedDates, dateStr) {
+            document.getElementById('event_date_input').value = dateStr;
+        }
+    });
+});
+</script>
 @endsection

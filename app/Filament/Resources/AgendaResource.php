@@ -15,38 +15,72 @@ class AgendaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
+    protected static ?string $navigationLabel = 'Agenda';
+
+    protected static ?string $label = 'Agenda';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', str()->slug($state))),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->unique('agendas', 'slug', ignoreRecord: true),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\DatePicker::make('event_date')
-                    ->required()
-                    ->label('Tanggal Acara'),
-                Forms\Components\TimePicker::make('event_time')
-                    ->label('Waktu Acara')
-                    ->seconds(false),
-                Forms\Components\TextInput::make('location')
-                    ->maxLength(255)
-                    ->label('Lokasi'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'upcoming' => 'Mendatang',
-                        'ongoing' => 'Sedang Berlangsung',
-                        'completed' => 'Selesai',
-                    ])
-                    ->default('upcoming')
-                    ->required(),
+                Forms\Components\Section::make('Informasi Agenda')
+                    ->description('Masukkan informasi lengkap tentang agenda')
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Judul Agenda')
+                            ->placeholder('Contoh: Rapat Guru Bulanan')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', str()->slug($state))),
+
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Slug')
+                            ->disabled()
+                            ->unique(Agenda::class, 'slug', ignoreRecord: true),
+
+                        Forms\Components\Textarea::make('description')
+                            ->columnSpanFull()
+                            ->label('Deskripsi')
+                            ->placeholder('Jelaskan detail agenda...')
+                            ->rows(4),
+                    ]),
+
+                Forms\Components\Section::make('Waktu & Tempat')
+                    ->schema([
+                        Forms\Components\DatePicker::make('event_date')
+                            ->required()
+                            ->label('Tanggal')
+                            ->native(false)
+                            ->displayFormat('d F Y'),
+
+                        Forms\Components\TextInput::make('event_time')
+                            ->label('Waktu')
+                            ->placeholder('14:30')
+                            ->maxLength(5)
+                            ->hint('Format: JJ:MM'),
+
+                        Forms\Components\TextInput::make('location')
+                            ->label('Tempat/Lokasi')
+                            ->placeholder('Contoh: Ruang Rapat A')
+                            ->maxLength(255),
+                    ])->columns(3),
+
+                Forms\Components\Section::make('Status')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'upcoming' => 'Akan Datang',
+                                'ongoing' => 'Sedang Berlangsung',
+                                'completed' => 'Selesai',
+                            ])
+                            ->default('upcoming')
+                            ->required()
+                            ->native(false),
+                    ]),
             ]);
     }
 
@@ -55,26 +89,48 @@ class AgendaResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->label('Judul')
+                    ->weight('bold'),
+
                 Tables\Columns\TextColumn::make('event_date')
-                    ->date('d M Y')
-                    ->sortable(),
+                    ->date('d F Y')
+                    ->sortable()
+                    ->label('Tanggal'),
+
                 Tables\Columns\TextColumn::make('event_time')
-                    ->time('H:i')
+                    ->formatStateUsing(fn (?string $state): ?string => $state ? substr($state, 0, 5) : null)
                     ->label('Waktu'),
+
                 Tables\Columns\TextColumn::make('location')
-                    ->searchable(),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'gray' => 'upcoming',
-                        'blue' => 'ongoing',
-                        'green' => 'completed',
-                    ]),
+                    ->searchable()
+                    ->label('Tempat')
+                    ->limit(25)
+                    ->placeholder('-'),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'upcoming' => 'info',
+                        'ongoing' => 'warning',
+                        'completed' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'upcoming' => 'Akan Datang',
+                        'ongoing' => 'Sedang Berlangsung',
+                        'completed' => 'Selesai',
+                        default => $state,
+                    })
+                    ->label('Status'),
             ])
+            ->defaultSort('event_date', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Filter Status')
                     ->options([
-                        'upcoming' => 'Mendatang',
+                        'upcoming' => 'Akan Datang',
                         'ongoing' => 'Sedang Berlangsung',
                         'completed' => 'Selesai',
                     ]),
@@ -87,7 +143,9 @@ class AgendaResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->striped()
+            ->paginated([10, 25, 50]);
     }
 
     public static function getRelations(): array

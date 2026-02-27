@@ -8,6 +8,7 @@ class About extends Model
 {
     protected $fillable = [
         'title',
+        'principal_name',
         'content',
         'image',
         'key',

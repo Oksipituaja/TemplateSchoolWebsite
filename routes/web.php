@@ -49,6 +49,9 @@ Route::get('/ppdb', PPDB::class)->name('ppdb');
 Route::get('/privacy-policy', Privacy::class)->name('privacy');
 Route::get('/terms-and-conditions', Terms::class)->name('terms');
 
+// Debug Route (untuk verify agenda data)
+Route::get('/debug/agenda', [\App\Http\Controllers\DebugAgendaController::class, 'checkDisplay'])->name('debug.agenda');
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () {

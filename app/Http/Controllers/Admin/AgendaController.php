@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAgendaRequest;
+use App\Http\Requests\UpdateAgendaRequest;
 use App\Models\Agenda;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class AgendaController extends Controller
 {
@@ -20,19 +22,17 @@ class AgendaController extends Controller
         return view('admin.agendas.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreAgendaRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:agendas',
-            'description' => 'nullable|string',
-            'event_date' => 'required|date',
-            'location' => 'nullable|string',
-            'status' => 'required|in:upcoming,ongoing,completed',
-        ]);
+        $data = $request->validated();
+        
+        // Pecah datetime menjadi date dan time
+        $dt = Carbon::parse($data['event_date']);
+        $data['event_date'] = $dt->format('Y-m-d');
+        $data['event_time'] = $dt->format('H:i:s');
 
-        Agenda::create($validated);
-        return redirect()->route('admin.agendas.index')->with('success', 'Agenda created successfully!');
+        Agenda::create($data);
+        return redirect()->route('admin.agendas.index')->with('success', 'Agenda berhasil dibuat!');
     }
 
     public function edit(Agenda $agenda): View
@@ -40,24 +40,22 @@ class AgendaController extends Controller
         return view('admin.agendas.edit', compact('agenda'));
     }
 
-    public function update(Agenda $agenda, Request $request)
+    public function update(Agenda $agenda, UpdateAgendaRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:agendas,slug,' . $agenda->id,
-            'description' => 'nullable|string',
-            'event_date' => 'required|date',
-            'location' => 'nullable|string',
-            'status' => 'required|in:upcoming,ongoing,completed',
-        ]);
+        $data = $request->validated();
+        
+        // Pecah datetime menjadi date dan time
+        $dt = Carbon::parse($data['event_date']);
+        $data['event_date'] = $dt->format('Y-m-d');
+        $data['event_time'] = $dt->format('H:i:s');
 
-        $agenda->update($validated);
-        return redirect()->route('admin.agendas.index')->with('success', 'Agenda updated successfully!');
+        $agenda->update($data);
+        return redirect()->route('admin.agendas.index')->with('success', 'Agenda berhasil diperbarui!');
     }
 
     public function destroy(Agenda $agenda)
     {
         $agenda->delete();
-        return redirect()->route('admin.agendas.index')->with('success', 'Agenda deleted successfully!');
+        return redirect()->route('admin.agendas.index')->with('success', 'Agenda berhasil dihapus!');
     }
 }

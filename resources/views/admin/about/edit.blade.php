@@ -12,8 +12,13 @@
             @error('title') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
+        <div id="principalNameField" class="hidden"><label class="block text-sm font-medium mb-1">Principal Name</label>
+            <input type="text" name="principal_name" value="{{ old('principal_name', $about->principal_name) }}" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Nama Kepala Sekolah">
+            @error('principal_name') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+        </div>
+
         <div><label class="block text-sm font-medium mb-1">Key (Unique identifier)</label>
-            <select name="key" required disabled class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-100">
+            <select id="keySelect" name="key" required disabled class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-100">
                 <option value="hero_image" {{ $about->key === 'hero_image' ? 'selected' : '' }}>Hero Image (Gambar di Homepage)</option>
                 <option value="principal_greeting" {{ $about->key === 'principal_greeting' ? 'selected' : '' }}>Sambutan Kepala Sekolah</option>
                 <option value="school_profile" {{ $about->key === 'school_profile' ? 'selected' : '' }}>Profil Sekolah</option>
@@ -53,6 +58,23 @@
             </div>
             @error('image') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const keySelect = document.getElementById('keySelect');
+            const principalNameField = document.getElementById('principalNameField');
+
+            function togglePrincipalName() {
+                if (keySelect.value === 'principal_greeting') {
+                    principalNameField.classList.remove('hidden');
+                } else {
+                    principalNameField.classList.add('hidden');
+                }
+            }
+
+            togglePrincipalName();
+        });
+        </script>
 
         <script>
         document.addEventListener('DOMContentLoaded', function() {

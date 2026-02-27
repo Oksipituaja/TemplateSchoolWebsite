@@ -24,6 +24,7 @@ class AboutController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'principal_name' => 'nullable|string|max:255',
             'key' => 'required|string|unique:abouts',
             'content' => 'required|string',
             'image' => 'nullable|image|max:5120',
@@ -47,6 +48,7 @@ class AboutController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'principal_name' => 'nullable|string|max:255',
             'key' => 'required|string|unique:abouts,key,' . $about->id,
             'content' => 'required|string',
             'image' => 'nullable|image|max:5120',

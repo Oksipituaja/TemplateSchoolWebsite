@@ -61,11 +61,9 @@
                         <!-- Principal Image with Circular Frame -->
                         <div class="flex justify-center order-1 lg:order-2">
                             <div class="relative w-64 h-64 md:w-80 md:h-80">
-                                <!-- Circular Background (Red) -->
-                                <div class="absolute inset-0 bg-red-500 rounded-full shadow-2xl"></div>
                                 
                                 <!-- Image -->
-                                <div class="absolute inset-4 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                                <div class="absolute inset-0 rounded-full overflow-hidden bg-red-500 flex items-center justify-center">
                                     @if($principalGreeting && $principalGreeting->image)
                                         <img src="{{ asset('storage/' . $principalGreeting->image) }}" 
                                              alt="{{ $principalGreeting->title ?? 'Kepala Sekolah' }}"
@@ -77,6 +75,15 @@
                                         </div>
                                     @endif
                                 </div>
+
+                                <!-- Principal Name Badge -->
+                                @if($principalGreeting && $principalGreeting->principal_name)
+                                    <div class="absolute z-20 -bottom-2 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-6 py-2 rounded-full shadow-lg border-2 border-white whitespace-nowrap">
+                                        <p class="text-sm md:text-base font-bold uppercase tracking-wide">
+                                            {{ $principalGreeting->principal_name }}
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
